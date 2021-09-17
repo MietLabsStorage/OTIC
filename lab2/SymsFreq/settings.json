@@ -1,0 +1,13 @@
+{
+  "FileNames": [
+    "Files/Frankenstein, by Mary Wollstonecraft (Godwin) Shelley.txt",
+    "Files/Three Men in a Boat, by Jerome K. Jerome.txt",
+    "Files/Лев Николаевич Толстой. Война и мир 1.txt",
+    "Files/Михаил Лермонтов. Герой нашего времени.txt"
+  ],
+  "SortByFreq": true,
+  "EqualUpAndLowCases": true,
+  "WithRelativeFreq": false,
+  "Encode": "windows-1251",
+  "OnlyRussion": true 
+}

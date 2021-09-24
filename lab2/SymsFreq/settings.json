@@ -6,8 +6,9 @@
     "Files/Михаил Лермонтов. Герой нашего времени.txt"
   ],
   "SortByFreq": true,
-  "EqualUpAndLowCases": true,
+  "EqualUpAndLowCases": false,
   "WithRelativeFreq": false,
   "Encode": "windows-1251",
-  "OnlyRussion": true 
+  "OnlyRussion": false,
+  "ShowFreqInfo": false
 }

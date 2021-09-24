@@ -14,27 +14,42 @@ namespace SymsFreq
         {
             var maxDictLen = freqDicts.Max(_ => _.Count());
             var sortedDict = freqDicts
-                .Select(_ => (_settings.SortByFreq ? _.OrderByDescending(v => v.Value) : _.OrderBy(k => k.Key))
+                .Select(_ => (_settings.SortByFreq ?? false ? _.OrderByDescending(v => v.Value) : _.OrderBy(k => k.Key))
                     .ToList())
                 .ToList();
             var sumSyms = sortedDict.Select(_ => _.Sum(v => (double)v.Value)).ToList();
 
+            double infoCount = 0;
             for (int i = 0; i < maxDictLen; i++)
             {
                 for (int j = 0; j < sortedDict.Count; j++)
                 {
                     if (sortedDict[j].Count > i)
                     {
-                        var relativeFreq = (_settings.WithRelativeFreq) ? $"({sortedDict[j][i].Value/sumSyms[j]})" : "";
-                        Console.Write($"| {sortedDict[j][i].Key} ({(int)sortedDict[j][i].Key}):  \t {sortedDict[j][i].Value} {relativeFreq}\t");
+                        var freq = sortedDict[j][i].Value / sumSyms[j];
+                        var relativeFreq = (_settings.WithRelativeFreq ?? false) ? $"({freq})" : "";
+                        var key = (int) sortedDict[j][i].Key == 10 ? ' ' : sortedDict[j][i].Key;
+                        var freqInfo = "";
+                        if (_settings.ShowFreqInfo ?? false)
+                        {
+                            var symInfo = -Math.Log2(freq);
+                            freqInfo = (_settings.ShowFreqInfo ?? false) ? $"{symInfo};\t {symInfo * freq}" : "";
+                            infoCount += symInfo * freq;
+                        }
+
+                        Console.Write($"| {key} ({(int)sortedDict[j][i].Key}):  \t {sortedDict[j][i].Value} {relativeFreq}\t | {freqInfo}");
                     }
                     else
                     {
-                        var emptyStr = (_settings.WithRelativeFreq) ? "|\t\t\t\t\t\t" : "|\t\t\t";
+                        var emptyStr = (_settings.WithRelativeFreq ?? false) ? "|\t\t\t\t\t\t" : "|\t\t\t";
                         Console.Write(emptyStr);
                     }
                 }
                 Console.WriteLine();
+            }
+            if (_settings.ShowFreqInfo ?? false)
+            {
+                Console.WriteLine($"All info count: {infoCount}");
             }
         }
 
@@ -52,10 +67,10 @@ namespace SymsFreq
             }
             else
             {
-                fileNames.AddRange(_settings.FileNames);
+                fileNames.AddRange(_settings?.FileNames ?? new List<string>());
             }
 
-            var texts = fileNames.Select(_ => File.ReadAllText(_, Encoding.GetEncoding(_settings.Encode)))
+            var texts = fileNames.Select(_ => File.ReadAllText(_, Encoding.GetEncoding(_settings?.Encode ?? "windows-1251")))
                 .ToList();
 
             for (int i = 0; i < texts.Count(); i++)
@@ -63,14 +78,14 @@ namespace SymsFreq
                 symsFreqDictionaries.Add(new Dictionary<char, int>());
                 foreach (var sym in texts[i])
                 {
-                    var key = _settings.EqualUpAndLowCases ? sym.ToString().ToLower()[0] : sym;
+                    var key = _settings.EqualUpAndLowCases ?? false ? sym.ToString().ToLower()[0] : sym;
                     if (symsFreqDictionaries[i].ContainsKey(key))
                     {
                         symsFreqDictionaries[i][key] = symsFreqDictionaries[i][key] + 1;
                     }
                     else
                     {
-                        if (_settings.OnlyRussion)
+                        if (_settings.OnlyRussion ?? false)
                         {
                             if (IsRussian(key))
                             {

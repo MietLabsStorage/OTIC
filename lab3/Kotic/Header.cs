@@ -7,12 +7,11 @@ namespace Kotic
 {
     public class Header
     {
-        public const int SizeBytesCount = 2;
-        public const int StartBytesCount = 2;
-        public const int PositionFilesCount = 11;
+        public static readonly int[] PositionSignature = {0, 1, 2, 3, 4};
+        public static readonly int PositionVersion = 5;
+        public static readonly int PositionSubversion = 6;
+        public static readonly int PositionFilesCount = 11;
         public static readonly int[] PositionArchiveSize = {12, 13, 14, 15};
-
-        private long _offset;
 
         private readonly List<byte> _blob;
 
@@ -22,14 +21,12 @@ namespace Kotic
             this.AddSignature()
                 .AddVersion()
                 .AddSubversion()
-                .Reserv(1)
+                .AddReserve(1)
                 .AddCWC()
                 .AddCC()
                 .AddAIP()
                 .AddFilesCount()
-                .AddSize();
-
-            _offset = 16;
+                .AddArchiveSize();
         }
 
         public byte[] Blob => _blob.ToArray();
@@ -52,7 +49,7 @@ namespace Kotic
             return this;
         }
 
-        private Header Reserv(int count)
+        private Header AddReserve(int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -97,40 +94,15 @@ namespace Kotic
             return this;
         }
 
-        private Header AddSize()
+        private Header AddArchiveSize()
         {
             _blob.AddRange(new byte[] { 0x00, 0x00, 0x00, 0x00 });
             return this;
         }
 
-        private void IncFilesCount()
+        public void IncFilesCount()
         {
             _blob[PositionFilesCount] += 0x01;
-        }
-
-        public void AddFileInfo(FileInfo fileInfo)
-        {
-            List<byte> size = new List<byte>(new byte[] { 0x00, 0x00 });
-            var fileSize = BitConverter.GetBytes(fileInfo.Length);
-            Array.Reverse(fileSize);
-            size.AddRange(fileSize);
-            for (int i = 0; i < SizeBytesCount; i++)
-            {
-                _blob.Add(size[size.Count - 1 - i]);
-            }
-
-            _offset += SizeBytesCount + StartBytesCount + Encoding.ASCII.GetBytes(fileInfo.Name).Length;
-            List<byte> start = new List<byte>(new byte[] { 0x00, 0x00 });
-            var fileStart = BitConverter.GetBytes(_offset);
-            Array.Reverse(fileStart);
-            size.AddRange(fileStart);
-            for (int i = 0; i < StartBytesCount; i++)
-            {
-                _blob.Add(size[size.Count - 1 - i]);
-            }
-
-            _offset += fileInfo.Length;
-            IncFilesCount();
         }
     }
 }

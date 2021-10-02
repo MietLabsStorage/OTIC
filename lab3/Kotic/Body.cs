@@ -15,9 +15,9 @@ namespace Kotic
 
         public byte[] Blob => _blob.ToArray();
 
-        public void AddBodyFile(FileInfo fileInfo)
+        public void AddBodyFile(FileInfo fileInfo, string path)
         {
-            _blob.AddRange(new BodyFile(fileInfo).Blob);
+            _blob.AddRange(new BodyFile(fileInfo, path).Blob);
         }
     }
 }

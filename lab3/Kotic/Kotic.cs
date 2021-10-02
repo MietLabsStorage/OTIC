@@ -10,20 +10,15 @@ namespace Kotic
         private readonly Header _header;
         private readonly Body _body;
 
-        public Kotic(string filename)
+        public Kotic(List<string> filenames)
         {
             _header = new Header();
             _body = new Body();
 
-            FileInfo fileInfo = new FileInfo(filename);
-            _header.AddFileInfo(fileInfo);
-            _body.AddBodyFile(fileInfo);
-
-            _header.AddFileInfo(fileInfo);
-            _body.AddBodyFile(fileInfo);
-
-            _header.AddFileInfo(fileInfo);
-            _body.AddBodyFile(fileInfo);
+            foreach (var filename in filenames)
+            {
+                AddFile(filename, "");
+            }
         }
 
         public string Extension => "kotic";
@@ -57,6 +52,31 @@ namespace Kotic
             for (int i = 0; i < Header.PositionArchiveSize.Length; i++)
             {
                 blob[Header.PositionArchiveSize[i]] = archiveSize[i];
+            }
+        }
+
+        private void AddFile(string filename, string path)
+        {
+            FileInfo fileInfo = new FileInfo(filename);
+
+            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                var directory = new DirectoryInfo(filename);
+                foreach (var file in directory.GetFiles())
+                {
+                    var filepath = Path.Combine(path, directory.Name);
+                    AddFile(file.FullName, filepath);
+                }
+                foreach (var file in directory.GetDirectories())
+                {
+                    var filepath = Path.Combine(path, directory.Name);
+                    AddFile(file.FullName, filepath);
+                }
+            }
+            else
+            {
+                _body.AddBodyFile(fileInfo, path);
+                _header.IncFilesCount();
             }
         }
     }

@@ -11,9 +11,8 @@ namespace Kotic
     {
         public static readonly int PositionFileNameSize = 6;
         public static readonly int PositionFileName = 7;
-
-        public const int OldSizeBytesCount = 3;
-        public const int NewSizeBytesCount = 3;
+        public static readonly int[] PositionOldSize = new[] { 0, 1, 2};
+        public static readonly int[] PositionNewSize = new[] { 3, 4, 5 };
 
         private readonly List<byte> _blob;
 
@@ -30,20 +29,24 @@ namespace Kotic
 
         private BodyFileHeader AddOldSize(int oldSize)
         {
-            var oldSizeBytes = BitConverter.GetBytes(oldSize);
-            for (int i = OldSizeBytesCount - 1; i >= 0;  i--)
+            List<byte> bytes = new List<byte>();
+            bytes.AddRange(BitConverter.GetBytes(oldSize));
+
+            for (int i = 0; i < PositionOldSize.Length; i++)
             {
-                _blob.Add(oldSizeBytes[i]);
+                _blob.Add(bytes[i]);
             }
             return this;
         }
 
         private BodyFileHeader AddNewSize(int newSize)
         {
-            var newSizeBytes = BitConverter.GetBytes(newSize);
-            for (int i = NewSizeBytesCount - 1; i >= 0; i--)
+            List<byte> bytes = new List<byte>();
+            bytes.AddRange(BitConverter.GetBytes(newSize));
+
+            for (int i = 0; i < PositionNewSize.Length; i++)
             {
-                _blob.Add(newSizeBytes[i]);
+                _blob.Add(bytes[i]);
             }
             return this;
         }

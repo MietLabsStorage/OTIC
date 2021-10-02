@@ -1,82 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Kotic
 {
-    public class Kotic
+    public static class Kotic
     {
-        private readonly Header _header;
-        private readonly Body _body;
+        public static readonly byte CurrentVersion = 0x01;
+        public static readonly byte CurrentSubversion = 0x03;
+        public static readonly byte[] Signature = new byte[] { 0x6b, 0x6f, 0x74, 0x69, 0x63 };
 
-        public Kotic(List<string> filenames)
+        public static void CheckSignature(byte[] signature)
         {
-            _header = new Header();
-            _body = new Body();
-
-            foreach (var filename in filenames)
+            bool check = signature.Length == Signature.Length;
+            if (check)
             {
-                AddFile(filename, "");
-            }
-        }
-
-        public string Extension => "kotic";
-
-        public byte[] Blob()
-        {
-            List<byte> bytes = new List<byte>();
-            bytes.AddRange(_header.Blob);
-            bytes.AddRange(_body.Blob);
-            return bytes.ToArray();
-        } 
-
-        public void GenerateArchive(string generatePath)
-        {
-            string filename = $"{generatePath}\\{"kotic"}.{Extension}";
-
-            var blob = Blob();
-            UpdateArchiveSize(ref blob);
-
-            File.WriteAllBytes(filename, blob);
-        }
-
-        private void UpdateArchiveSize(ref byte[] blob)
-        {
-            var blobSize = blob.Length;
-
-            List<byte> size = new List<byte>(new byte[] { 0x00, 0x00, 0x00, 0x00 });
-            var archiveSize = BitConverter.GetBytes(blobSize);
-            Array.Reverse(archiveSize);
-            size.AddRange(archiveSize);
-            for (int i = 0; i < Header.PositionArchiveSize.Length; i++)
-            {
-                blob[Header.PositionArchiveSize[i]] = archiveSize[i];
-            }
-        }
-
-        private void AddFile(string filename, string path)
-        {
-            FileInfo fileInfo = new FileInfo(filename);
-
-            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-            {
-                var directory = new DirectoryInfo(filename);
-                foreach (var file in directory.GetFiles())
+                for (int i = 0; i < Signature.Length; i++)
                 {
-                    var filepath = Path.Combine(path, directory.Name);
-                    AddFile(file.FullName, filepath);
-                }
-                foreach (var file in directory.GetDirectories())
-                {
-                    var filepath = Path.Combine(path, directory.Name);
-                    AddFile(file.FullName, filepath);
+                    check &= signature[i] == Signature[i];
                 }
             }
-            else
+
+            if (!check)
             {
-                _body.AddBodyFile(fileInfo, path);
-                _header.IncFilesCount();
+                throw new Exception("Not kotic file");
+            }
+        }
+
+        public static void CheckVersion(byte version, byte subversion)
+        {
+            if (version != CurrentVersion || subversion != CurrentSubversion)
+            {
+                throw new Exception("Bad version");
             }
         }
     }

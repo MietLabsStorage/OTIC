@@ -13,9 +13,9 @@ namespace Kotic.Coders
             return file;
         }
 
-        public byte[] Decode(byte[] archive)
+        public byte[] Decode(byte[] file, int oldSize)
         {
-            return archive;
+            return file;
         }
     }
 }

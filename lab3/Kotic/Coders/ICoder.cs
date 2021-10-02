@@ -10,6 +10,6 @@ namespace Kotic.Coders
     {
         byte[] Encode(byte[] file);
 
-        byte[] Decode(byte[] archive);
+        byte[] Decode(byte[] file, int oldSize);
     }
 }

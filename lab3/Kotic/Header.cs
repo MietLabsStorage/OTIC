@@ -15,6 +15,8 @@ namespace Kotic
 
         private readonly List<byte> _blob;
 
+        public static int HeaderSize => 16;
+
         public Header()
         {
             _blob = new List<byte>();
@@ -33,19 +35,19 @@ namespace Kotic
 
         private Header AddSignature()
         {
-            _blob.AddRange(new byte[] {0x6b, 0x6f, 0x74, 0x69, 0x63});
+            _blob.AddRange(Kotic.Signature);
             return this;
         }
 
         private Header AddVersion()
         {
-            _blob.Add(0x01);
+            _blob.Add(Kotic.CurrentVersion);
             return this;
         }
 
         private Header AddSubversion()
         {
-            _blob.Add(0x03);
+            _blob.Add(Kotic.CurrentSubversion);
             return this;
         }
 

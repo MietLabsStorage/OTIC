@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="HeaderDescription.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

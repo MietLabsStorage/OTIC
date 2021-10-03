@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Button x:Name="btn_arch_dir" Content="Архивирование директории" HorizontalAlignment="Left" Margin="108,62,0,0" VerticalAlignment="Top" Width="170" Height="42" Click="ClickDirArchiving"/>
+        <Button x:Name="btn_arch_file" Content="Архивирование файла" HorizontalAlignment="Left" Margin="108,145,0,0" VerticalAlignment="Top" Width="170" Height="42" Click="ClickFileArchiving"/>
+        <Label x:Name="l_error" Content="" HorizontalAlignment="Center" Margin="0,380,0,0"  VerticalAlignment="Top" Width="800" HorizontalContentAlignment="Center"/>
+        <Label x:Name="l_inf" Content="" HorizontalAlignment="Center" Margin="0,336,0,0"  VerticalAlignment="Top" Width="800" HorizontalContentAlignment="Center" />
+        <Button Content="Разархивирование" HorizontalAlignment="Left" Margin="511,62,0,0" VerticalAlignment="Top" Width="170" Height="42" Click="ClickDearchiving"/>
 
     </Grid>
 </Window>

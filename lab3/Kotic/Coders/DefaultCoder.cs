@@ -12,10 +12,20 @@ namespace Kotic.Coders
         {
             if(info.Length != 0)
             {
+                int mult = 0;
                 List<byte> newFile = new List<byte>(file);
-                for (int i = 0; i < info.Length; i++)
-                {
-                    newFile.RemoveAt((int)info[i] - i);
+                newFile.RemoveAt((int)info[0]);
+                for (int i = 1; i < info.Length; i++)
+                { 
+                    if((int)info[i] <= (int)info[i-1])
+                    {
+                        mult++;
+                    }
+                    if(newFile[(int)info[i] - i + mult * 256] != 113 && newFile[(int)info[i] - i + 1 + mult * 256] != 113)
+                    {
+
+                    }
+                    newFile.RemoveAt((int)info[i] - i + mult*256);
                 }
 
                 return newFile.ToArray();
@@ -43,7 +53,7 @@ namespace Kotic.Coders
                 if (i - last == count)
                 {
                     info.Add((byte)blob.Count);
-                    info.Add((byte) (blob.Count + 1));
+                    info.Add((byte) ((blob.Count + 1) % 256));
                     blob.Add(index);
                     blob.Add(BitConverter.GetBytes('q')[0]);
                     index += 0x01;

@@ -33,7 +33,7 @@ namespace Kotic
 
         public void GenerateArchive(string generatePath)
         {
-            string filename = $"{generatePath}\\{"kotic"}.{Extension}";
+            string filename = $"{generatePath}\\{Guid.NewGuid()}.{Extension}";
 
             var blob = Blob();
             UpdateArchiveSize(ref blob);

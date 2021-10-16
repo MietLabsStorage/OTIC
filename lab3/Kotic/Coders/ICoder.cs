@@ -8,8 +8,8 @@ namespace Kotic.Coders
 {
     interface ICoder
     {
-        byte[] Encode(byte[] file);
+        (byte[] blob, byte[] info) Encode(byte[] file);
 
-        byte[] Decode(byte[] file, int oldSize);
+        byte[] Decode(byte[] file, byte[] info, int oldSize);
     }
 }

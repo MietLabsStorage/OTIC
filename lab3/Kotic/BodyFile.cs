@@ -11,6 +11,7 @@ namespace Kotic
     {
         public static readonly int PositionFileNameSize = 6;
         public static readonly int PositionFileName = 7;
+        public static readonly int CoderInfoSize = 2;
         public static readonly int[] PositionOldSize = new[] { 0, 1, 2};
         public static readonly int[] PositionNewSize = new[] { 3, 4, 5 };
 
@@ -76,11 +77,12 @@ namespace Kotic
             ICoder coder = new DefaultCoder();
 
             var file = File.ReadAllBytes(fileInfo.FullName);
-            var encodedFile = coder.Encode(file);
+            var (encodedFile, coderInfo) = coder.Encode(file);
             var fileName = Path.Combine(path, fileInfo.Name);
 
             this.AddFileHeader(file.Length, encodedFile.Length, fileName)
-                .AddFileBlob(file);
+                .AddFileInfo(coderInfo)
+                .AddFileBlob(encodedFile);
         }
 
         public byte[] Blob => _blob.ToArray();
@@ -94,6 +96,21 @@ namespace Kotic
         private BodyFile AddFileBlob(byte[] fileBlob)
         {
             _blob.AddRange(fileBlob);
+            return this;
+        }
+
+        private BodyFile AddFileInfo(byte[] info)
+        {
+            /*List<byte> bytes = new List<byte>();
+            bytes.AddRange(BitConverter.GetBytes(info.Length));
+
+            for (int i = 0; i < BodyFileHeader.CoderInfoSize; i++)
+            {
+                _blob.Add(bytes[i]);
+            }*/
+            
+            _blob.AddRange(info);
+
             return this;
         }
     }

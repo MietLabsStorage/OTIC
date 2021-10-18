@@ -62,7 +62,7 @@ namespace Kotic.Coders
 
                 blob.Add(file[i]);
             }
-
+            //эти 4 строчки вставить в конце кода
             var infoSize = info.Count - 2;
             var infoSizeBytes = BitConverter.GetBytes(infoSize);
 

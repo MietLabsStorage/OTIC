@@ -9,7 +9,7 @@ namespace Kotic
     public static class Kotic
     {
         public static readonly byte CurrentVersion = 0x01;
-        public static readonly byte CurrentSubversion = 0x03;
+        public static readonly byte CurrentSubversion = 0x04;//изменить на 0 04
         public static readonly byte[] Signature = new byte[] { 0x6b, 0x6f, 0x74, 0x69, 0x63 };
 
         public static void CheckSignature(byte[] signature)

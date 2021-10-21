@@ -113,6 +113,7 @@ namespace KoticGui
                 KoticArchivator koticArchivator = new KoticArchivator(filenames);
                 koticArchivator.GenerateArchive(dialog.FileName);
                 l_inf.Content = "Архивация прошла успешно";
+                filenames = new List<string>();
             }
             catch (Exception ex)
             {

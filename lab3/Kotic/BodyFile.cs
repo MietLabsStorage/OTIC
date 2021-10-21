@@ -74,7 +74,7 @@ namespace Kotic
         {
             _blob = new List<byte>();
 
-            ICoder coder = new DefaultCoder();
+            ICoder coder = new Shannon_FanoCoder();
 
             var file = File.ReadAllBytes(fileInfo.FullName);
             var (encodedFile, coderInfo) = coder.Encode(file);

@@ -101,7 +101,7 @@ namespace Kotic
                 offset += BitConverter.ToInt32(newSizeBytes.ToArray());
 
                 var decodedFile = coder.Decode(blob.ToArray(), infoSize.ToArray(), BitConverter.ToInt32(oldSizeBytes.ToArray()));
-                _files.Add((decodedFile, Encoding.ASCII.GetString(fileName.ToArray())));
+                _files.Add((decodedFile, Encoding.UTF8.GetString(fileName.ToArray())));
 
                 foreach (var file in _files)
                 {

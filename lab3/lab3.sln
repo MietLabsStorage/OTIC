@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kotic", "Kotic\Kotic.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{80DC8468-CEEA-4507-BB29-EBE7FD434D9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KoticGui", "KoticGui\KoticGui.csproj", "{D5532912-234E-48DC-A298-9C67AF7071FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KoticGui", "KoticGui\KoticGui.csproj", "{D5532912-234E-48DC-A298-9C67AF7071FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

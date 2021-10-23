@@ -5,13 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KoticGui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="180" Width="390">
     <Grid>
-        <Button x:Name="btn_arch_dir" Content="Архивирование директории" HorizontalAlignment="Left" Margin="108,62,0,0" VerticalAlignment="Top" Width="170" Height="42" Click="ClickDirArchiving"/>
-        <Button x:Name="btn_arch_file" Content="Архивирование файла" HorizontalAlignment="Left" Margin="108,145,0,0" VerticalAlignment="Top" Width="170" Height="42" Click="ClickFileArchiving"/>
+        <Button x:Name="btn_arch_dir" HorizontalAlignment="Left" Margin="150,30,0,0" VerticalAlignment="Top" Width="90" Height="90" Click="ClickDirArchiving" Background="AliceBlue">
+            <Image Source="images/dir-archiv.png" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        </Button>
+        <Button x:Name="btn_arch_file" HorizontalAlignment="Left" Margin="40,30,0,0" Width="90" Click="ClickFileArchiving" VerticalAlignment="Top" Background="AliceBlue">
+            <Image Source="images/file-archiv.png" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        </Button>
         <Label x:Name="l_error" Content="" HorizontalAlignment="Center" Margin="0,380,0,0"  VerticalAlignment="Top" Width="800" HorizontalContentAlignment="Center"/>
         <Label x:Name="l_inf" Content="" HorizontalAlignment="Center" Margin="0,336,0,0"  VerticalAlignment="Top" Width="800" HorizontalContentAlignment="Center" />
-        <Button Content="Разархивирование" HorizontalAlignment="Left" Margin="511,62,0,0" VerticalAlignment="Top" Width="170" Height="42" Click="ClickDearchiving"/>
+        <Button HorizontalAlignment="Left" Margin="260,30,0,0" VerticalAlignment="Top" Width="90" Height="90" Click="ClickDearchiving" Background="AliceBlue">
+            <Image Source="images/open-archiv.png" HorizontalAlignment="Center" VerticalAlignment="Top" />
+        </Button>
 
     </Grid>
 </Window>
+    

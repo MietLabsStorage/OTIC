@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-
+using System.Windows;
 namespace Kotic.Coders
 {
     class Shannon_FanoCoder : ICoder
@@ -62,8 +62,18 @@ namespace Kotic.Coders
                     }
                 }
             }
+
+            public static FrequancyOfByte SearchFreq(List<FrequancyOfByte> frequancyOfBytes, byte searchingSymbol)
+            {
+                foreach(FrequancyOfByte item in frequancyOfBytes)
+                {
+                    if (item._byte == searchingSymbol)
+                        return item;
+                }
+                return null;
+            }
         }
-        [Serializable]
+        
         public class CodeOfSymbol
         {
             private byte _byte;
@@ -123,7 +133,7 @@ namespace Kotic.Coders
             {
                 byteStr.Add(info[i]);
             }
-            string[] arrStr = System.Text.Encoding.UTF8.GetString(byteStr.ToArray()).Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            string[] arrStr = System.Text.Encoding.ASCII.GetString(byteStr.ToArray()).Split(" ", StringSplitOptions.RemoveEmptyEntries);
             int j = 0;
             for (int i = 2; i < count + 2 ; i++) 
             {
@@ -154,7 +164,12 @@ namespace Kotic.Coders
                 
             }
 
-            return newFile.ToArray();
+            byte[] byteFile = new byte[oldSize];
+            for(int i = 0; i < oldSize; i++)
+            {
+                byteFile[i] = newFile[i];
+            }
+            return byteFile;
         }
 
         public (byte[] blob, byte[] info) Encode(byte[] file)
@@ -166,6 +181,16 @@ namespace Kotic.Coders
                 FrequancyOfByte.AddingFreq(item, ref frequancyOfBytes);
             }
             FrequancyOfByte.Sort(ref frequancyOfBytes);
+
+            //подсчет теоретического количества информации
+            double theorySize = 0;
+            foreach(FrequancyOfByte item in frequancyOfBytes)
+            {
+                theorySize += -(Math.Log2(Convert.ToDouble(item.GetFreq())/file.Length)*Convert.ToDouble(item.GetFreq()));
+            }
+
+
+
             List<CodeOfSymbol> codeOfSymbols = new List<CodeOfSymbol>();
             foreach(FrequancyOfByte item in frequancyOfBytes)
             {
@@ -206,7 +231,7 @@ namespace Kotic.Coders
                    
                 }
             }
-            int countBitsToAdd = Math.Abs(fileInBitsBoolean.Count() / 8 * 8 - fileInBitsBoolean.Count()) ;
+            int countBitsToAdd = Math.Abs((fileInBitsBoolean.Count() / 8 + 1) * 8 - fileInBitsBoolean.Count()) ;
             for(int i = 0; i < countBitsToAdd; i++)
             {
                 fileInBitsBoolean.Add(false);
@@ -234,7 +259,7 @@ namespace Kotic.Coders
             {
                 info.Add(item.GetByte());
             }
-            byte[] byteString = System.Text.Encoding.UTF8.GetBytes(codeString);
+            byte[] byteString = System.Text.Encoding.ASCII.GetBytes(codeString);
             foreach (byte item in byteString)
             {
                 info.Add(item);
@@ -246,8 +271,14 @@ namespace Kotic.Coders
             info[0] = infoSizeBytes[0];
             info[1] = infoSizeBytes[1];
 
+            int sizeOfNewCode = 0;
+            foreach(CodeOfSymbol item in codeOfSymbols)
+            {
+                sizeOfNewCode += item.GetCode().Length*(FrequancyOfByte.SearchFreq(frequancyOfBytes, item.GetByte()).GetFreq());
+            }
 
-         
+           
+            
             return (newFile, info.ToArray());
         }
 

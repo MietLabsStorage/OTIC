@@ -37,12 +37,12 @@ namespace Kotic.Coders
             int count = 0;
             int last = 0;
             byte index = 0x00;
-
-            var rnd = new Random();
+                        
             for (int i = 0; i < file.Length; i++)
             {
                 if (count == 0)
                 {
+                    var rnd = new Random((int)DateTime.Now.Ticks);
                     count = rnd.Next(1, 16);
                 }
 
@@ -54,6 +54,7 @@ namespace Kotic.Coders
                     blob.Add(BitConverter.GetBytes('q')[0]);
                     index += 0x01;
                     last = i;
+                    count = 0;
                 }
 
                 blob.Add(file[i]);

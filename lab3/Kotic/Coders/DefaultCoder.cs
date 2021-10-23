@@ -58,6 +58,7 @@ namespace Kotic.Coders
                     blob.Add(BitConverter.GetBytes('q')[0]);
                     index += 0x01;
                     last = i;
+                    count = 0;
                 }
 
                 blob.Add(file[i]);

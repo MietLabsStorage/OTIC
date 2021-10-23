@@ -61,7 +61,7 @@ namespace Kotic
 
         private BodyFileHeader AddFileName(string fileName)
         {
-            _blob.AddRange(Encoding.ASCII.GetBytes(fileName));
+            _blob.AddRange(Encoding.UTF8.GetBytes(fileName));
             return this;
         }
     }

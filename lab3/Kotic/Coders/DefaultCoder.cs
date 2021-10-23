@@ -21,10 +21,6 @@ namespace Kotic.Coders
                     {
                         mult++;
                     }
-                    if(newFile[(int)info[i] - i + mult * 256] != 113 && newFile[(int)info[i] - i + 1 + mult * 256] != 113)
-                    {
-
-                    }
                     newFile.RemoveAt((int)info[i] - i + mult*256);
                 }
 

@@ -69,7 +69,7 @@ namespace Kotic
 
                 offset += fileNameSize;
 
-                ICoder coder = new DefaultCoder();
+                ICoder coder = new Shannon_FanoCoder();
 
                 var infoSizeArr = new List<byte>();
                 for (int i = 0; i < BodyFileHeader.CoderInfoSize; i++)

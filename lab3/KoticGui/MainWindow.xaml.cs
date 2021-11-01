@@ -151,6 +151,6 @@ namespace KoticGui
                 l_error.Content = ex.Message;
                 l_inf.Content = "Разархивация не прошла";
             }
-        }
+        }      
     }
 }

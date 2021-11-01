@@ -18,7 +18,6 @@
         <Button HorizontalAlignment="Left" Margin="260,30,0,0" VerticalAlignment="Top" Width="90" Height="90" Click="ClickDearchiving" Background="AliceBlue">
             <Image Source="images/open-archiv.png" HorizontalAlignment="Center" VerticalAlignment="Top" />
         </Button>
-
     </Grid>
 </Window>
     

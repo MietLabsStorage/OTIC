@@ -5,55 +5,64 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
+using System.Numerics;
+
 namespace Kotic.Coders
 {
-    class Shannon_FanoCoder : ICoder
+    public class FrequancyOfByte
     {
-
-        public class FrequancyOfByte
+        private byte _byte;
+        private int _freq;       
+        public FrequancyOfByte(byte symbol, int freq)
         {
-            private byte _byte;
-            private int _freq;
-            public FrequancyOfByte(byte symbol, int freq)
-            {
-                this._byte = symbol;
-                this._freq = freq;
-            }
-            public byte GetByte()
-            {
-                return _byte;
-            }
+            this._byte = symbol;
+            this._freq = freq;
+        }
+        public byte GetByte()
+        {
+            return _byte;
+        }
+       
 
-            public int GetFreq()
-            {
-                return _freq;
-            }
+        public int GetFreq()
+        {
+            return _freq;
+        }
+        
 
-            public static void AddingFreq(byte serchingSymbol, ref List<FrequancyOfByte> frequancyOfBytes)
+        public static void AddingFreq(byte serchingSymbol, ref List<FrequancyOfByte> frequancyOfBytes)
+        {
+            bool isFound = false;
+            for (int i = 0; i < frequancyOfBytes.Count(); i++)
             {
-                bool isFound = false;
-                for (int i = 0; i < frequancyOfBytes.Count(); i++)
+                if (frequancyOfBytes[i]._byte.Equals(serchingSymbol))
                 {
-                    if (frequancyOfBytes[i]._byte.Equals(serchingSymbol))
+                    frequancyOfBytes[i]._freq += 1;
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound)
+            {
+                frequancyOfBytes.Add(new FrequancyOfByte(serchingSymbol, 1));
+            }
+        }
+
+        public static void Sort(ref List<FrequancyOfByte> frequancyOfBytes)
+        {
+            for (int i = 0; i < frequancyOfBytes.Count(); i++)
+            {
+                for (int j = i + 1; j < frequancyOfBytes.Count() ; j++)
+                {
+                    if (frequancyOfBytes[i]._freq < frequancyOfBytes[j]._freq)
                     {
-                        frequancyOfBytes[i]._freq += 1;
-                        isFound = true;
-                        break;
+                        FrequancyOfByte temp = frequancyOfBytes[i];
+                        frequancyOfBytes[i] = frequancyOfBytes[j];
+                        frequancyOfBytes[j] = temp;
                     }
-                }
-                if (!isFound)
-                {
-                    frequancyOfBytes.Add(new FrequancyOfByte(serchingSymbol, 1));
-                }
-            }
-
-            public static void Sort(ref List<FrequancyOfByte> frequancyOfBytes)
-            {
-                for(int i = 0; i < frequancyOfBytes.Count(); i++)
-                {
-                    for(int j = i + 1; j < frequancyOfBytes.Count() - 1; j++)
+                    else if (frequancyOfBytes[i]._freq == frequancyOfBytes[j]._freq)
                     {
-                        if(frequancyOfBytes[i]._freq <= frequancyOfBytes[j]._freq)
+                        if (frequancyOfBytes[i]._byte > frequancyOfBytes[j]._byte)
                         {
                             FrequancyOfByte temp = frequancyOfBytes[i];
                             frequancyOfBytes[i] = frequancyOfBytes[j];
@@ -63,16 +72,24 @@ namespace Kotic.Coders
                 }
             }
 
-            public static FrequancyOfByte SearchFreq(List<FrequancyOfByte> frequancyOfBytes, byte searchingSymbol)
-            {
-                foreach(FrequancyOfByte item in frequancyOfBytes)
-                {
-                    if (item._byte == searchingSymbol)
-                        return item;
-                }
-                return null;
-            }
         }
+
+        public static FrequancyOfByte SearchFreq(List<FrequancyOfByte> frequancyOfBytes, byte searchingSymbol)
+        {
+            foreach (FrequancyOfByte item in frequancyOfBytes)
+            {
+                if (item._byte == searchingSymbol)
+                    return item;
+            }
+            return null;
+        }
+
+        
+    }
+
+    class Shannon_FanoCoder : ICoder
+    {
+
         
         public class CodeOfSymbol
         {

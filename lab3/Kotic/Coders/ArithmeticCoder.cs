@@ -31,7 +31,7 @@ namespace Kotic.Coders
         }
     }
 
-    class ArithmeticCoder : ICoder
+    public class ArithmeticCoder : ICoder
     {
         public byte[] Decode(byte[] file, byte[] info, int oldSize)
         {

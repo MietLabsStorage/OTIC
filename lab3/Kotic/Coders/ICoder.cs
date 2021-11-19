@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kotic.Coders
 {
-    interface ICoder
+    public interface ICoder
     {
         (byte[] blob, byte[] info) Encode(byte[] file);
 

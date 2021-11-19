@@ -69,7 +69,7 @@ namespace Kotic
 
                 offset += fileNameSize;
 
-                ICoder coder = new ArithmeticCoder();
+                
 
                 var infoSizeArr = new List<byte>();
                 for (int i = 0; i < BodyFileHeader.CoderInfoSize; i++)
@@ -100,6 +100,7 @@ namespace Kotic
 
                 offset += BitConverter.ToInt32(newSizeBytes.ToArray());
 
+                ICoder coder = new ArithmeticCoder();
                 var decodedFile = coder.Decode(blob.ToArray(), infoSize.ToArray(), BitConverter.ToInt32(oldSizeBytes.ToArray()));
                 _files.Add((decodedFile, Encoding.UTF8.GetString(fileName.ToArray())));
 

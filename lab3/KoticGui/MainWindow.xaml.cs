@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Kotic;
+using System.Collections;
+using Kotic.Coders;
 
 namespace KoticGui
 {
@@ -23,9 +25,17 @@ namespace KoticGui
     public partial class MainWindow : Window
     {
         private List<string> filenames;
+        private List<string> chosedCoders;
+        Dictionary<string, string> coders;
         public MainWindow()
         {
             filenames = new List<string>();
+            chosedCoders = new List<string>();
+            coders = new Dictionary<string, string>();
+            coders.Add("001", "q кодирование");
+            coders.Add("010", "Шеннон-Фано");
+            coders.Add("011", "Арифметичский");
+            coders.Add("100", "RLE");
             InitializeComponent();
         }
 
@@ -130,6 +140,7 @@ namespace KoticGui
 
         public void ClickDearchiving(object sender, RoutedEventArgs e)
         {
+            GetCoders(GetCodeCoders());
             l_error.Content = "";
             l_inf.Content = "";
             try
@@ -151,6 +162,132 @@ namespace KoticGui
                 l_error.Content = ex.Message;
                 l_inf.Content = "Разархивация не прошла";
             }
-        }      
+        }  
+        
+        public void CheckBoxChangedTrue(object sender, RoutedEventArgs e)
+        {
+            chosedCoders.Add(((CheckBox)sender).Content.ToString());
+            txtCoders.Text = "";
+            string text = "";
+            foreach(String str in chosedCoders)
+            {
+                text += str;
+                text += "\n";
+            }
+            txtCoders.Text = text;
+        }
+        public void CheckBoxChangedFalse(object sender, RoutedEventArgs e)
+        {
+            chosedCoders.Remove(((CheckBox)sender).Content.ToString());
+            txtCoders.Text = "";
+            string text = "";
+            foreach (String str in chosedCoders)
+            {
+                text += str;
+                text += "\n";
+            }
+            txtCoders.Text = text;
+        }
+
+        public byte[] GetCodeCoders()
+        {
+            byte[] codersInfo = new byte[2];
+
+            List<BitArray> codersInBitList = new List<BitArray>();
+
+            int j = 0;
+            foreach(string str in chosedCoders)
+            {
+                var myKey = coders.FirstOrDefault(x => x.Value == str).Key;
+                BitArray tempCode = new BitArray(3);
+                foreach(char sym in myKey)
+                {
+                    if (sym == '1')
+                        tempCode[j] = true;
+                    else
+                        tempCode[j] = false;
+                    j++;
+                }
+                codersInBitList.Add(tempCode);
+                j = 0;
+            }
+
+            bool[] boolCode = new bool[16];
+           int k = 0;
+           foreach(BitArray item in codersInBitList)
+            {
+                foreach(bool var in item)
+                {
+                    boolCode[k] = var;
+                    k++;
+                }
+            }
+
+            BitArray codersInBit = new BitArray(boolCode);
+            for(int i = codersInBit.Length - 1; i < 16; i++)
+            {
+                codersInBit[i] = false;
+            }
+            codersInBit.CopyTo(codersInfo, 0);
+            return codersInfo;
+        }
+
+        public List<ICoder> GetCoders(byte[] codesInBytes)
+        {
+            List<ICoder> codersList = new List<ICoder>();
+            BitArray codeInBits = new BitArray(codesInBytes);
+
+            string strCode = "";
+            List<string> strCoders = new List<string>();
+
+
+            foreach(bool item in codeInBits)
+            {
+                if (item == true)
+                    strCode += '1';
+                else
+                    strCode += '0';
+            }
+            
+            string tempCode = "";
+            int j = 0;
+            for(int i = 0; i < 16; i++)
+            {
+                if(j == 3)
+                {
+                    if (tempCode == "000")
+                        codersList.Add(null);
+                    else
+                    {
+                        tempCode = coders[tempCode];
+                        switch (tempCode)
+                        {
+                            case "q кодирование":
+                                codersList.Add(new DefaultCoder());
+                                break;
+                            case "Шеннон-Фано":
+                                codersList.Add(new Shannon_FanoCoder());
+                                break;
+                            case "Арифметичский":
+                                codersList.Add(new ArithmeticCoder());
+                                break;
+                            case "RLE":
+                                break;
+                        }
+                    }
+                    j = 0;
+                    tempCode = "";
+                    //codersList.Add(coders[code]);
+                }
+                tempCode += strCode[i];
+                j++;
+            }
+           
+            
+
+
+
+            return codersList;
+        }
     }
 }

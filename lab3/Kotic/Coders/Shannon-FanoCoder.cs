@@ -87,7 +87,7 @@ namespace Kotic.Coders
         
     }
 
-    class Shannon_FanoCoder : ICoder
+    public class Shannon_FanoCoder : ICoder
     {
 
         

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kotic.Coders
 {
-    class DefaultCoder: ICoder
+    public class DefaultCoder: ICoder
     {
         public byte[] Decode(byte[] file, byte[] info, int oldSize)
         {

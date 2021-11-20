@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Kotic;
+using System.Collections;
+using Kotic.Coders;
 
 namespace KoticGui
 {
@@ -23,9 +25,17 @@ namespace KoticGui
     public partial class MainWindow : Window
     {
         private List<string> filenames;
+        private List<string> chosedCoders;
+        Dictionary<string, string> coders;
         public MainWindow()
         {
             filenames = new List<string>();
+            chosedCoders = new List<string>();
+            coders = new Dictionary<string, string>();
+            coders.Add("001", "q кодирование");
+            coders.Add("010", "Шеннон-Фано");
+            coders.Add("011", "Арифметичский");
+            coders.Add("100", "RLE");
             InitializeComponent();
         }
 
@@ -62,7 +72,7 @@ namespace KoticGui
                     throw new Exception("Не выбран путь сохранения");
                 }
                 l_inf.Content = "Архивация началась";
-                KoticArchivator koticArchivator = new KoticArchivator(filenames);
+                KoticArchivator koticArchivator = new KoticArchivator(filenames, GetCodeCoders());
                 koticArchivator.GenerateArchive(dialog.FileName);
                 l_inf.Content = "Архивация прошла успешно";
             }
@@ -110,7 +120,7 @@ namespace KoticGui
                 }
               
                 l_inf.Content = "Архивация началась";
-                KoticArchivator koticArchivator = new KoticArchivator(filenames);
+                KoticArchivator koticArchivator = new KoticArchivator(filenames, GetCodeCoders());
                 koticArchivator.GenerateArchive(dialog.FileName);
                 l_inf.Content = "Архивация прошла успешно";
                 filenames = new List<string>();
@@ -130,10 +140,11 @@ namespace KoticGui
 
         public void ClickDearchiving(object sender, RoutedEventArgs e)
         {
+           
             l_error.Content = "";
             l_inf.Content = "";
-            try
-            {
+            //try
+            //{
                 var dialog = new CommonOpenFileDialog();
                 dialog.InitialDirectory = "D:";
                 dialog.Title = "Выбор архива";
@@ -145,12 +156,82 @@ namespace KoticGui
                 l_inf.Content = "Разархивация прошла успешно";
 
 
-            }
+           /* }
             catch (Exception ex)
             {
                 l_error.Content = ex.Message;
                 l_inf.Content = "Разархивация не прошла";
+            }*/
+        }  
+        
+        public void CheckBoxChangedTrue(object sender, RoutedEventArgs e)
+        {
+            chosedCoders.Add(((CheckBox)sender).Content.ToString());
+            txtCoders.Text = "";
+            string text = "";
+            foreach(String str in chosedCoders)
+            {
+                text += str;
+                text += "\n";
             }
-        }      
+            txtCoders.Text = text;
+        }
+        public void CheckBoxChangedFalse(object sender, RoutedEventArgs e)
+        {
+            chosedCoders.Remove(((CheckBox)sender).Content.ToString());
+            txtCoders.Text = "";
+            string text = "";
+            foreach (String str in chosedCoders)
+            {
+                text += str;
+                text += "\n";
+            }
+            txtCoders.Text = text;
+        }
+
+        public  byte[] GetCodeCoders()
+        {
+            byte[] codersInfo = new byte[2];
+
+            List<BitArray> codersInBitList = new List<BitArray>();
+
+            int j = 0;
+            foreach(string str in chosedCoders)
+            {
+                var myKey = coders.FirstOrDefault(x => x.Value == str).Key;
+                BitArray tempCode = new BitArray(3);
+                foreach(char sym in myKey)
+                {
+                    if (sym == '1')
+                        tempCode[j] = true;
+                    else
+                        tempCode[j] = false;
+                    j++;
+                }
+                codersInBitList.Add(tempCode);
+                j = 0;
+            }
+
+            bool[] boolCode = new bool[16];
+           int k = 0;
+           foreach(BitArray item in codersInBitList)
+            {
+                foreach(bool var in item)
+                {
+                    boolCode[k] = var;
+                    k++;
+                }
+            }
+
+            BitArray codersInBit = new BitArray(boolCode);
+            for(int i = codersInBit.Length - 1; i < 16; i++)
+            {
+                codersInBit[i] = false;
+            }
+            codersInBit.CopyTo(codersInfo, 0);
+            return codersInfo;
+        }
+
+       
     }
 }

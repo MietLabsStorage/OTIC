@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Kotic
     {
         private readonly byte[] _archive;
         private readonly List<(byte[] blob, string filename)> _files;
-
+        
         public KoticDearchivator(string fileName)
         {
             _archive = File.ReadAllBytes(fileName);
@@ -69,28 +70,49 @@ namespace Kotic
 
                 offset += fileNameSize;
 
-                ICoder coder = new ArithmeticCoder();
-
-                var infoSizeArr = new List<byte>();
-                for (int i = 0; i < BodyFileHeader.CoderInfoSize; i++)
+                byte[] byteCoders = new byte[Header.PositionOfAlghorithms.Length];
+                for(int i = 0; i < Header.PositionOfAlghorithms.Length; i++)
                 {
-                    infoSizeArr.Add(_archive[offset + i]);
+                    byteCoders[i] = _archive[Header.PositionOfAlghorithms[i]];
                 }
-
-                offset += BodyFileHeader.CoderInfoSize;
-
-                var infoSize = new List<byte>();
-
-                while (infoSizeArr.Count < sizeof(int))
+                List<ICoder> listCoders = Kotic.GetCoders(byteCoders);
+                bool firstly = true;
+                List<byte[]> infos = new List<byte[]>(); 
+                foreach (var coder in listCoders)
                 {
-                    infoSizeArr.Add(0x00);
-                }
-                for (int i = 0; i < BitConverter.ToInt32(infoSizeArr.ToArray()); i++)
-                {
-                    infoSize.Add(_archive[offset + i]);
-                }
+                    var infoSizeArr = new List<byte>();
+                    for (int i = 0; i < BodyFileHeader.CoderInfoSize; i++)
+                    {
+                        infoSizeArr.Add(_archive[offset + i]);
+                    }
 
-                offset += BitConverter.ToInt32(infoSizeArr.ToArray());
+                    offset += BodyFileHeader.CoderInfoSize;
+
+                    var infoSize = new List<byte>();
+
+                    while (infoSizeArr.Count < sizeof(int))
+                    {
+                        infoSizeArr.Add(0x00);
+                    }
+                    for (int i = 0; i < BitConverter.ToInt32(infoSizeArr.ToArray()); i++)
+                    {
+                        infoSize.Add(_archive[offset + i]);
+                    }
+
+                    offset += BitConverter.ToInt32(infoSizeArr.ToArray());
+
+                    /*List<byte> blob = new List<byte>();
+                    for (int i = offset; i < offset + BitConverter.ToInt32(newSizeBytes.ToArray()); i++)
+                    {
+                        blob.Add(_archive[i]);
+                    }
+
+                    offset += BitConverter.ToInt32(newSizeBytes.ToArray());
+
+                    var decodedFile = coder.Decode(blob.ToArray(), infoSize.ToArray(), BitConverter.ToInt32(oldSizeBytes.ToArray()));
+                    _files.Add((decodedFile, Encoding.UTF8.GetString(fileName.ToArray())));*/
+                    infos.Add(infoSize.ToArray());
+                }
 
                 List<byte> blob = new List<byte>();
                 for (int i = offset; i < offset + BitConverter.ToInt32(newSizeBytes.ToArray()); i++)
@@ -100,8 +122,11 @@ namespace Kotic
 
                 offset += BitConverter.ToInt32(newSizeBytes.ToArray());
 
-                var decodedFile = coder.Decode(blob.ToArray(), infoSize.ToArray(), BitConverter.ToInt32(oldSizeBytes.ToArray()));
-                _files.Add((decodedFile, Encoding.UTF8.GetString(fileName.ToArray())));
+                for (int i = infos.Count - 1; i >= 0; i--)
+                {
+                    blob = listCoders[i].Decode(blob.ToArray(), infos[i], BitConverter.ToInt32(oldSizeBytes.ToArray())).ToList();
+                }
+                _files.Add((blob.ToArray(), Encoding.UTF8.GetString(fileName.ToArray())));
 
                 foreach (var file in _files)
                 {

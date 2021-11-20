@@ -10,10 +10,10 @@ namespace Kotic
         private readonly Header _header;
         private readonly Body _body;
 
-        public KoticArchivator(List<string> filenames)
+        public KoticArchivator(List<string> filenames, byte[] coders)
         {
-            _header = new Header();
-            _body = new Body();
+            _header = new Header(coders);
+            _body = new Body(coders);
 
             foreach (var filename in filenames)
             {

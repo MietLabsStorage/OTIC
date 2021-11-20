@@ -11,22 +11,22 @@ namespace Kotic
         public static readonly int PositionVersion = 5;
         public static readonly int PositionSubversion = 6;
         public static readonly int PositionFilesCount = 11;
+        public static readonly int[] PositionOfAlghorithms = { 8,9 };
         public static readonly int[] PositionArchiveSize = {12, 13, 14, 15};
 
         private readonly List<byte> _blob;
 
         public static int HeaderSize => 16;
 
-        public Header()
+        public Header(byte[] coders)
         {
             _blob = new List<byte>();
             this.AddSignature()
                 .AddVersion()
                 .AddSubversion()
                 .AddReserve(1)
-                .AddCWC()
-                .AddCC()
-                .AddAIP()
+                .AddCoders(coders)
+                .AddReserve(1)
                 .AddFilesCount()
                 .AddArchiveSize();
         }
@@ -57,6 +57,13 @@ namespace Kotic
             {
                 _blob.Add(0x00);
             }
+            return this;
+        }
+
+        private Header AddCoders(byte[] coders)
+        {
+            _blob.Add(coders[0]);
+            _blob.Add(coders[1]);
             return this;
         }
 

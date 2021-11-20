@@ -72,7 +72,7 @@ namespace KoticGui
                     throw new Exception("Не выбран путь сохранения");
                 }
                 l_inf.Content = "Архивация началась";
-                KoticArchivator koticArchivator = new KoticArchivator(filenames);
+                KoticArchivator koticArchivator = new KoticArchivator(filenames, GetCodeCoders());
                 koticArchivator.GenerateArchive(dialog.FileName);
                 l_inf.Content = "Архивация прошла успешно";
             }
@@ -120,7 +120,7 @@ namespace KoticGui
                 }
               
                 l_inf.Content = "Архивация началась";
-                KoticArchivator koticArchivator = new KoticArchivator(filenames);
+                KoticArchivator koticArchivator = new KoticArchivator(filenames, GetCodeCoders());
                 koticArchivator.GenerateArchive(dialog.FileName);
                 l_inf.Content = "Архивация прошла успешно";
                 filenames = new List<string>();
@@ -140,11 +140,11 @@ namespace KoticGui
 
         public void ClickDearchiving(object sender, RoutedEventArgs e)
         {
-            GetCoders(GetCodeCoders());
+           
             l_error.Content = "";
             l_inf.Content = "";
-            try
-            {
+            //try
+            //{
                 var dialog = new CommonOpenFileDialog();
                 dialog.InitialDirectory = "D:";
                 dialog.Title = "Выбор архива";
@@ -156,12 +156,12 @@ namespace KoticGui
                 l_inf.Content = "Разархивация прошла успешно";
 
 
-            }
+           /* }
             catch (Exception ex)
             {
                 l_error.Content = ex.Message;
                 l_inf.Content = "Разархивация не прошла";
-            }
+            }*/
         }  
         
         public void CheckBoxChangedTrue(object sender, RoutedEventArgs e)
@@ -189,7 +189,7 @@ namespace KoticGui
             txtCoders.Text = text;
         }
 
-        public byte[] GetCodeCoders()
+        public  byte[] GetCodeCoders()
         {
             byte[] codersInfo = new byte[2];
 
@@ -232,62 +232,6 @@ namespace KoticGui
             return codersInfo;
         }
 
-        public List<ICoder> GetCoders(byte[] codesInBytes)
-        {
-            List<ICoder> codersList = new List<ICoder>();
-            BitArray codeInBits = new BitArray(codesInBytes);
-
-            string strCode = "";
-            List<string> strCoders = new List<string>();
-
-
-            foreach(bool item in codeInBits)
-            {
-                if (item == true)
-                    strCode += '1';
-                else
-                    strCode += '0';
-            }
-            
-            string tempCode = "";
-            int j = 0;
-            for(int i = 0; i < 16; i++)
-            {
-                if(j == 3)
-                {
-                    if (tempCode == "000")
-                        codersList.Add(null);
-                    else
-                    {
-                        tempCode = coders[tempCode];
-                        switch (tempCode)
-                        {
-                            case "q кодирование":
-                                codersList.Add(new DefaultCoder());
-                                break;
-                            case "Шеннон-Фано":
-                                codersList.Add(new Shannon_FanoCoder());
-                                break;
-                            case "Арифметичский":
-                                codersList.Add(new ArithmeticCoder());
-                                break;
-                            case "RLE":
-                                break;
-                        }
-                    }
-                    j = 0;
-                    tempCode = "";
-                    //codersList.Add(coders[code]);
-                }
-                tempCode += strCode[i];
-                j++;
-            }
-           
-            
-
-
-
-            return codersList;
-        }
+       
     }
 }

@@ -70,19 +70,47 @@ namespace Kotic
     {
         private readonly List<byte> _blob;
 
-        public BodyFile(FileInfo fileInfo, string path)
+        public BodyFile(FileInfo fileInfo, string path, byte[] byteCoders)
         {
             _blob = new List<byte>();
 
-            ICoder coder = new ArithmeticCoder();
+            //ICoder coder = new ArithmeticCoder();
 
             var file = File.ReadAllBytes(fileInfo.FullName);
-            var (encodedFile, coderInfo) = coder.Encode(file);
+
+            List<ICoder> listCoders = Kotic.GetCoders(byteCoders);
+
+            /*var (encodedFile, coderInfo) = coder.Encode(file);
             var fileName = Path.Combine(path, fileInfo.Name);
 
             this.AddFileHeader(file.Length, encodedFile.Length, fileName)
                 .AddFileInfo(coderInfo)
-                .AddFileBlob(encodedFile);
+                .AddFileBlob(encodedFile);*/
+
+            var fileBlob = file;
+            var fileName = Path.Combine(path, fileInfo.Name);
+            List<byte[]> coderInfos = new List<byte[]>();
+            foreach (var coder in listCoders)
+            {
+                var (encodedFile, coderInfo) = coder.Encode(fileBlob);
+                coderInfos.Add(coderInfo);
+                fileBlob = encodedFile;
+                /*if (addHeader)
+                {
+                    this.AddFileHeader(file.Length, encodedFile.Length, fileName);
+                    addHeader = false;
+                }
+
+                this.AddFileInfo(coderInfo);
+                f
+                    //.AddFileBlob(encodedFile);*/
+            }
+            this.AddFileHeader(file.Length, fileBlob.Length, fileName);
+            foreach(var coderInfo in coderInfos)
+            {
+                this.AddFileInfo(coderInfo);
+            }
+            this.AddFileBlob(fileBlob);
         }
 
         public byte[] Blob => _blob.ToArray();

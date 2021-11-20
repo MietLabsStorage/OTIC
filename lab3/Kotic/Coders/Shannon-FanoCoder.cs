@@ -135,7 +135,13 @@ namespace Kotic.Coders
         }
         public byte[] Decode(byte[] file, byte[] info, int oldSize)
         {
-            List<byte> newFile = new List<byte>(); 
+            List<byte> newFile = new List<byte>();
+            byte[] btOldSize = new byte[4];
+            for(int i = 0; i < 4; i++)
+            {
+                btOldSize[i] = info[2 + i];
+            }
+            oldSize = BitConverter.ToInt32(btOldSize);
             int count = (int)info[0];
             if (count == 0)
             {
@@ -146,13 +152,13 @@ namespace Kotic.Coders
 
             List<CodeOfSymbol> codeOfSymbols = new List<CodeOfSymbol>();
             List<byte> byteStr = new List<byte>();
-            for (int i = 2 + count ; i < info.Count(); i++)
+            for (int i = 6 + count ; i < info.Count(); i++)
             {
                 byteStr.Add(info[i]);
             }
             string[] arrStr = System.Text.Encoding.ASCII.GetString(byteStr.ToArray()).Split(" ", StringSplitOptions.RemoveEmptyEntries);
             int j = 0;
-            for (int i = 2; i < count + 2 ; i++) 
+            for (int i = 6; i < count + 6 ; i++) 
             {
                 codeOfSymbols.Add(new CodeOfSymbol(info[i], arrStr[j]));
                 j++;
@@ -272,10 +278,13 @@ namespace Kotic.Coders
                 info[3]= (0x01);
             else
                 info[3] = (0x00);
+            byte[] oldSize = BitConverter.GetBytes(file.Length);
+            foreach (byte it in oldSize)
+                info.Add(it);
             foreach (CodeOfSymbol item in codeOfSymbols)
             {
                 info.Add(item.GetByte());
-            }
+            }           
             byte[] byteString = System.Text.Encoding.ASCII.GetBytes(codeString);
             foreach (byte item in byteString)
             {

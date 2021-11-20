@@ -35,6 +35,12 @@ namespace Kotic.Coders
     {
         public byte[] Decode(byte[] file, byte[] info, int oldSize)
         {
+            byte[] btOldSize = new byte[4];
+            for (int i = 0; i < 4; i++)
+            {
+                btOldSize[i] = info[2 + i];
+            }
+            oldSize = BitConverter.ToInt32(btOldSize);
             int count = (int)info[0];
             if (count == 0)
             {
@@ -42,7 +48,7 @@ namespace Kotic.Coders
                     count = 256;
             }
             List<byte> byteStr = new List<byte>();
-            for (int i = 2 + count; i < info.Count(); i++)
+            for (int i = 6 + count; i < info.Count(); i++)
             {
                 byteStr.Add(info[i]);
             }
@@ -50,7 +56,7 @@ namespace Kotic.Coders
             List<FrequancyOfByte> frequancyOfBytes = new List<FrequancyOfByte>();           
             for(int i = 0; i < count; i++)
             {
-                frequancyOfBytes.Add(new FrequancyOfByte(info[i+2], int.Parse(arrStr[i])));
+                frequancyOfBytes.Add(new FrequancyOfByte(info[i+6], int.Parse(arrStr[i])));
             }
             FrequancyOfByte.Sort(ref frequancyOfBytes);
             BigInteger range = 1;
@@ -245,6 +251,9 @@ namespace Kotic.Coders
                 info[3] = (0x01);
             else
                 info[3] = (0x00);
+            byte[] oldSize = BitConverter.GetBytes(file.Length);
+            foreach (byte it in oldSize)
+                info.Add(it);
             foreach (FrequancyOfByte item in frequancyOfBytes)
             {
                 info.Add(item.GetByte());
@@ -255,6 +264,7 @@ namespace Kotic.Coders
             {
                 freqs += item.GetFreq().ToString() + " ";
             }
+            
             byte[] byteString = System.Text.Encoding.ASCII.GetBytes(freqs);
             foreach(byte bt in byteString)
             {

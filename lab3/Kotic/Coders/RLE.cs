@@ -49,6 +49,12 @@ namespace Kotic.Coders
             List<byte> blob = new List<byte>();
             List<byte> info = new List<byte>() { 0x00, 0x00 };
 
+            List<FrequancyOfByte> frequancyOfBytes = new List<FrequancyOfByte>();
+            foreach (byte item in file)
+            {
+                FrequancyOfByte.AddingFreq(item, ref frequancyOfBytes);
+            }
+            FrequancyOfByte.Sort(ref frequancyOfBytes);
             var count = 0;
             byte? value = 0x00;
             var disvalue = new List<byte>();
@@ -135,7 +141,11 @@ namespace Kotic.Coders
                     }
                 }
             }
-
+            double theorySize = 0;
+            foreach (FrequancyOfByte item in frequancyOfBytes)
+            {
+                theorySize += -(Math.Log2(Convert.ToDouble(item.GetFreq()) / file.Length) * Convert.ToDouble(item.GetFreq()));
+            }
             return (blob.ToArray(), info.ToArray());
         }
     }

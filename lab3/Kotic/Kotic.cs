@@ -90,6 +90,7 @@ namespace Kotic
                                 codersList.Add(new ArithmeticCoder());
                                 break;
                             case "RLE":
+                                codersList.Add(new RLE());
                                 break;
                         }
                     }

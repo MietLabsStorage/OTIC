@@ -1,16 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="images\dir-archiv.png" />
-    <None Remove="images\file-archiv.png" />
-    <None Remove="images\open-archiv.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
@@ -21,15 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="images\dir-archiv.png">
+    <Resource Include="images\archive_file.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="images\file-archiv.png">
+    <Resource Include="images\archive_folder.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="images\open-archiv.png">
+    <Resource Include="images\unarchive.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-
 </Project>

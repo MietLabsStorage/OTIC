@@ -47,13 +47,20 @@ namespace Kotic.Coders
             bitTable.CopyTo(byteTable, 0);
             var ind = BitConverter.ToInt32(byteTable);
 
-
             inputFile[ind-1] = !inputFile[ind-1];
             bitTable = new BitArray(inputFile.ToArray());
             byteTable = new byte[bitTable.Length / 8 + 1];
             bitTable.CopyTo(byteTable, 0);
 
-            return byteTable;
+            var blob = new List<byte>();
+            blob.AddRange(byteTable);
+
+            for (int i = rows; i >= 1; i--)
+            {
+                blob.RemoveAt((int)(Math.Pow(2, i - 1) - 1));
+            }
+
+            return blob.ToArray();
         }
 
         public (byte[] blob, byte[] info) Encode(byte[] file)
@@ -68,7 +75,7 @@ namespace Kotic.Coders
                 inputBits.Add((bool)bit);
             }
 
-            var controlCount = (int)Math.Ceiling(Math.Log2(inputBits.Count + 1)) + 1;
+            var controlCount = (int)Math.Ceiling(Math.Log2(inputBits.Count + 1));
             for (int i = 1; i <= controlCount; i++)
             {
                 inputBits.Insert((int)(Math.Pow(2, i - 1) - 1), false);
@@ -137,14 +144,22 @@ namespace Kotic.Coders
             byte[] byteTable = new byte[bitTable.Length / 8 + 1];
             bitTable.CopyTo(byteTable, 0);
 
+            var bitInput = new BitArray(inputBits.ToArray());
+            byte[] byteInput = new byte[bitInput.Length / 8 + 1];
+            bitInput.CopyTo(byteInput, 0);
+
             var sizeOfTable = BitConverter.GetBytes(bitTable.Length);
             var rows = BitConverter.GetBytes(controlCount);
 
             info.AddRange(sizeOfTable);
             info.AddRange(rows);
             info.AddRange(byteTable);
+            var infoSize = info.Count - 2;
+            var infoSizeBytes = BitConverter.GetBytes(infoSize);
+            info[0] = infoSizeBytes[0];
+            info[1] = infoSizeBytes[1];
 
-            return (blob.ToArray(), info.ToArray());
+            return (byteInput.ToArray(), info.ToArray());
         }
     }
 }

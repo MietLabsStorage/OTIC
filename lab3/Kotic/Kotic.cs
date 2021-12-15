@@ -23,6 +23,7 @@ namespace Kotic
             coders.Add("010", "Шеннон-Фано");
             coders.Add("011", "Арифметичский");
             coders.Add("100", "RLE");
+            coders.Add("101", "Hamming");
         }
 
         public static void CheckSignature(byte[] signature)
@@ -91,6 +92,9 @@ namespace Kotic
                                 break;
                             case "RLE":
                                 codersList.Add(new RLE());
+                                break;
+                            case "Hamming":
+                                codersList.Add(new Hamming());
                                 break;
                         }
                     }

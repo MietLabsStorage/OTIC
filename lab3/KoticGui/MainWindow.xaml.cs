@@ -36,6 +36,7 @@ namespace KoticGui
             coders.Add("010", "Шеннон-Фано");
             coders.Add("011", "Арифметичский");
             coders.Add("100", "RLE");
+            coders.Add("101", "Hamming");
             InitializeComponent();
         }
 
@@ -143,8 +144,8 @@ namespace KoticGui
            
             l_error.Content = "";
             l_inf.Content = "";
-            try
-            {
+           // try
+            //{
                 var dialog = new CommonOpenFileDialog();
                 dialog.InitialDirectory = "D:";
                 dialog.Title = "Выбор архива";
@@ -156,12 +157,12 @@ namespace KoticGui
                 l_inf.Content = "Разархивация прошла успешно";
 
 
-            }
-            catch (Exception ex)
+            //}
+          /*  catch (Exception ex)
             {
                 l_error.Content = ex.Message;
                 l_inf.Content = "Разархивация не прошла";
-            }
+            }*/
         }  
         
         public void CheckBoxChangedTrue(object sender, RoutedEventArgs e)

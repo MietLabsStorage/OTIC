@@ -28,6 +28,7 @@
         <CheckBox Content="Арифметичский" HorizontalAlignment="Left" Margin="410,107,0,0" VerticalAlignment="Top" Width="136" Checked="CheckBoxChangedTrue" Unchecked="CheckBoxChangedFalse" Height="15"/>
         <CheckBox Content="RLE" HorizontalAlignment="Left" Margin="410,130,0,0" VerticalAlignment="Top" Width="136" Checked="CheckBoxChangedTrue" Unchecked="CheckBoxChangedFalse" Height="15"/>
         <TextBox x:Name="txtCoders" HorizontalAlignment="Left" Margin="410,189,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Height="126"/>
+        <CheckBox Content="Hamming" HorizontalAlignment="Left" Margin="410,155,0,0" VerticalAlignment="Top" Width="136" Checked="CheckBoxChangedTrue" Unchecked="CheckBoxChangedFalse" Height="15"/>
     </Grid>
 </Window>
     

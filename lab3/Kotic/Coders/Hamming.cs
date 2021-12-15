@@ -11,9 +11,49 @@ namespace Kotic.Coders
     {
         public byte[] Decode(byte[] file, byte[] info, int oldSize)
         {
-            List<byte> blob = new List<byte>();
+            var sizeOfTable = BitConverter.ToInt32(new byte[] { info[0], info[1], info[2], info[3] });
+            var rows = BitConverter.ToInt32(new byte[] { info[4], info[5], info[6], info[7] });
+            var bitsArr = new BitArray(file);
 
-            return blob.ToArray();
+            var len = sizeOfTable / rows;
+            var inputBits = new bool[rows, len];
+            int q = 0;
+            foreach (var bit in bitsArr)
+            {
+                inputBits[q / len, q % len]=(bool)bit;
+                q++;
+            }
+
+            var inputFile = new List<bool>();
+            foreach (var bit in new BitArray(file))
+            {
+                inputFile.Add((bool)bit);
+            }
+
+            var controlLine = new List<bool>();
+            for (int i = 0; i < rows; i++)
+            {
+                var res = 0;
+                for (int j = 0; j < len; j++)
+                {
+                    res += (inputFile[j] ? 1 : 0) * (inputBits[i, j] ? 1 : 0);
+                }
+                controlLine.Add(res % 2 == 1 ? true : false);
+            }
+
+
+            var bitTable = new BitArray(controlLine.ToArray());
+            byte[] byteTable = new byte[bitTable.Length / 8 + 1];
+            bitTable.CopyTo(byteTable, 0);
+            var ind = BitConverter.ToInt32(byteTable);
+
+
+            inputFile[ind-1] = !inputFile[ind-1];
+            bitTable = new BitArray(inputFile.ToArray());
+            byteTable = new byte[bitTable.Length / 8 + 1];
+            bitTable.CopyTo(byteTable, 0);
+
+            return byteTable;
         }
 
         public (byte[] blob, byte[] info) Encode(byte[] file)
@@ -96,6 +136,13 @@ namespace Kotic.Coders
             var bitTable = new BitArray(listTable.ToArray());
             byte[] byteTable = new byte[bitTable.Length / 8 + 1];
             bitTable.CopyTo(byteTable, 0);
+
+            var sizeOfTable = BitConverter.GetBytes(bitTable.Length);
+            var rows = BitConverter.GetBytes(controlCount);
+
+            info.AddRange(sizeOfTable);
+            info.AddRange(rows);
+            info.AddRange(byteTable);
 
             return (blob.ToArray(), info.ToArray());
         }

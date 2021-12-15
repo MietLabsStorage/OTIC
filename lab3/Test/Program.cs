@@ -81,6 +81,17 @@ namespace Test
             {
                 inputBits[(int)(Math.Pow(2, i - 1) - 1)] = controlLine[i-1];
             }
+
+            var listTable = new List<bool>();
+            for (int i = 0; i < table.Length; i++)
+            {
+                listTable.Add(table[i / inputBits.Count, i % inputBits.Count]);
+            }
+            var bitTable = new BitArray(listTable.ToArray());
+            byte[] byteTable = new byte[bitTable.Length / 8 + 1];
+            bitTable.CopyTo(byteTable, 0);
+
+            var sizeOfTable = BitConverter.GetBytes(bitTable.Length);
         }
     }
 }

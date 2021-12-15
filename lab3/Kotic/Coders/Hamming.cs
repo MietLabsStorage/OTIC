@@ -41,24 +41,26 @@ namespace Kotic.Coders
                 controlLine.Add(res % 2 == 1 ? true : false);
             }
 
-
             var bitTable = new BitArray(controlLine.ToArray());
             byte[] byteTable = new byte[bitTable.Length / 8 + 1];
             bitTable.CopyTo(byteTable, 0);
-            var ind = BitConverter.ToInt32(byteTable);
 
-            inputFile[ind-1] = !inputFile[ind-1];
+            if (controlLine.Contains(true))
+            {
+                var ind = BitConverter.ToInt32(byteTable);
+                inputFile[ind - 1] = !inputFile[ind - 1];
+            }
+
+            for (int i = rows; i >= 1; i--)
+            {
+                inputFile.RemoveAt((int)(Math.Pow(2, i - 1) - 1));
+            }
             bitTable = new BitArray(inputFile.ToArray());
             byteTable = new byte[bitTable.Length / 8 + 1];
             bitTable.CopyTo(byteTable, 0);
 
             var blob = new List<byte>();
             blob.AddRange(byteTable);
-
-            for (int i = rows; i >= 1; i--)
-            {
-                blob.RemoveAt((int)(Math.Pow(2, i - 1) - 1));
-            }
 
             return blob.ToArray();
         }
